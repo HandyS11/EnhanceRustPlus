@@ -3,6 +3,7 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using EnhanceRustPlus.Configuration;
+using EnhanceRustPlus.Setup;
 using EnhanceRustPlus.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,7 +28,7 @@ namespace EnhanceRustPlus
 
             var builder = Host.CreateApplicationBuilder();
             var config = builder.Configuration.Get<Config>()
-                         ?? throw new MissingFieldException("Failed to load a valid config from AppSettings.json");
+                         ?? throw new FileNotFoundException("Failed to load a valid config from AppSettings.json");
 
             _serviceProvider = builder.Services
                 .AddSingleton(interactionService)
@@ -40,6 +41,12 @@ namespace EnhanceRustPlus
 
             await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);
             AttachEventHandlers();
+
+            _client.Ready += async () =>
+            {
+                var setupApp = _serviceProvider.GetRequiredService<SetupApp>();
+                await setupApp.SetupCategory(1237384106346680361);
+            };
 
             var app = builder.Build();
             await app.RunAsync();

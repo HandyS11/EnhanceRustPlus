@@ -16,8 +16,8 @@ namespace EnhanceRustPlus.Utils
                 Console.WriteLine(exception);
                 return Task.CompletedTask;
             }
-
             Console.WriteLine($"[General/{message.Severity}] {message}");
+
             return Task.CompletedTask;
         }
 
