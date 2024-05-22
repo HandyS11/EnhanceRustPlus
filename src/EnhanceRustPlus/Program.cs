@@ -3,11 +3,11 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using EnhanceRustPlus.Configuration;
-using EnhanceRustPlus.Setup;
 using EnhanceRustPlus.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace EnhanceRustPlus
 {
@@ -19,44 +19,71 @@ namespace EnhanceRustPlus
 
         public static async Task Main()
         {
-            _client = new DiscordSocketClient(new DiscordSocketConfig()
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            try
             {
-                UseInteractionSnowflakeDate = false
-            });
+                Log.Information("Starting up");
 
-            var interactionService = new InteractionService(_client.Rest);
+                _client = new DiscordSocketClient(new DiscordSocketConfig()
+                {
+                    UseInteractionSnowflakeDate = false
+                });
 
-            var builder = Host.CreateApplicationBuilder();
-            var config = builder.Configuration.Get<Config>()
-                         ?? throw new FileNotFoundException("Failed to load a valid config from AppSettings.json");
+                var interactionService = new InteractionService(_client.Rest);
 
-            _serviceProvider = builder.Services
-                .AddSingleton(interactionService)
-                .AddSingleton(_client)
-                .AddSingleton<EventHandlers>()
-                .BuildServiceProvider();
+                var builder = new HostBuilder()
+                    .ConfigureAppConfiguration((_, config) =>
+                    {
+                        config.AddJsonFile("AppSettings.json", optional: false, reloadOnChange: true);
+                    })
+                    .ConfigureServices((context, services) =>
+                    {
+                        var botSettings = new BotSettings();
+                        context.Configuration.Bind(botSettings);
 
-            await _client.LoginAsync(TokenType.Bot, config.Token);
-            await _client.StartAsync();
+                        services.AddSingleton(_client);
+                        services.AddSingleton(interactionService);
+                        services.AddSingleton(botSettings);
+                        services.AddSingleton<EventHandlers>();
 
-            await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);
-            AttachEventHandlers();
+                        services.AddBusinessServices();
+                        services.AddDbContext(context.HostingEnvironment.IsDevelopment());
+                    })
+                    .UseSerilog();
 
-            _client.Ready += async () =>
+                var host = builder.Build();
+                _serviceProvider = (ServiceProvider)host.Services;
+
+                var config = _serviceProvider.GetRequiredService<BotSettings>();
+
+                await _client.LoginAsync(TokenType.Bot, config.Token);
+                await _client.StartAsync();
+
+                await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);
+                AttachEventHandlers();
+
+                await host.RunAsync();
+            }
+            catch (Exception ex)
             {
-                var setupApp = _serviceProvider.GetRequiredService<SetupApp>();
-                await setupApp.SetupCategory(1237384106346680361);
-            };
-
-            var app = builder.Build();
-            await app.RunAsync();
+                Log.Fatal(ex, "An unhandled exception occurred during startup");
+            }
+            finally
+            {
+                await Log.CloseAndFlushAsync();
+            }
         }
 
         private static void AttachEventHandlers()
         {
             var eventHandlers = _serviceProvider.GetRequiredService<EventHandlers>();
 
-            _client.Log += EventHandlers.LogMessage;
+            _client.Log += EventHandlers.LogAsync;
             _client.Ready += eventHandlers.Ready;
             _client.InteractionCreated += eventHandlers.InteractionCreated;
         }

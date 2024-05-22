@@ -1,29 +1,34 @@
-﻿using Discord.Commands;
-using Discord.Interactions;
+﻿using Discord.Interactions;
 using Discord.WebSocket;
 using Discord;
+using Serilog.Events;
+using Serilog;
 
 namespace EnhanceRustPlus.Utils
 {
     public class EventHandlers(IServiceProvider serviceProvider, DiscordSocketClient client, InteractionService interactionService)
     {
-        public static Task LogMessage(LogMessage message)
+        public static async Task LogAsync(LogMessage message)
         {
-            if (message.Exception is CommandException exception)
+            var severity = message.Severity switch
             {
-                Console.WriteLine($"[Command/{message.Severity}] {exception.Command.Aliases[0]} "
-                                  + $"failed to execute in {exception.Context.Channel}");
-                Console.WriteLine(exception);
-                return Task.CompletedTask;
-            }
-            Console.WriteLine($"[General/{message.Severity}] {message}");
+                LogSeverity.Critical => LogEventLevel.Fatal,
+                LogSeverity.Error => LogEventLevel.Error,
+                LogSeverity.Warning => LogEventLevel.Warning,
+                LogSeverity.Info => LogEventLevel.Information,
+                LogSeverity.Verbose => LogEventLevel.Verbose,
+                LogSeverity.Debug => LogEventLevel.Debug,
+                _ => LogEventLevel.Information
+            };
+            Log.Write(severity, message.Exception, "[{Source}] {Message}", message.Source, message.Message);
 
-            return Task.CompletedTask;
+            await Task.CompletedTask;
         }
 
-        public Task Ready()
+        public async Task Ready()
         {
-            return interactionService.RegisterCommandsGloballyAsync();
+            await client.SetGameAsync("Rust");
+            await interactionService.RegisterCommandsGloballyAsync();
         }
 
         public Task InteractionCreated(SocketInteraction interaction)
