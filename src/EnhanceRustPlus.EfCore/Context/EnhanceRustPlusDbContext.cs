@@ -1,6 +1,5 @@
 ﻿using EnhanceRustPlus.Business.Models.Enums;
 using EnhanceRustPlus.EfCore.Entities;
-using EnhanceRustPlus.EfCore.Entities.Types;
 using EnhanceRustPlus.EfCore.Extensions;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +7,10 @@ namespace EnhanceRustPlus.EfCore.Context
 {
     public class EnhanceRustPlusDbContext : DbContext
     {
-        public DbSet<Guild> Guilds { get; set; }
+        public DbSet<Category> Guilds { get; set; }
+        public DbSet<Channel> Channels { get; set; }
+
+        public DbSet<ChannelType> ChannelTypes { get; set; }
 
         public EnhanceRustPlusDbContext() { }
 
@@ -23,18 +25,34 @@ namespace EnhanceRustPlus.EfCore.Context
         {
             modelBuilder.Entity<Guild>(e =>
             {
-                e.HasMany(x => x.Channels).WithOne(x => x.Guild).HasForeignKey(x => x.GuildId);
+                e.HasOne<Category>().WithOne(x => x.Guild);
+                e.HasOne<Role>().WithOne(x => x.Guild);
+            });
+
+            modelBuilder.Entity<Category>(e =>
+            {
+                e.HasMany(x => x.Channels).WithOne(x => x.Category).HasForeignKey(x => x.CategoryId);
             });
 
             modelBuilder.Entity<Channel>(e =>
             {
-                e.HasOne<ChannelType>().WithMany(x => x.Channels).HasForeignKey(x => x.ChannelName);
+                e.HasMany(x => x.Messages).WithOne(x => x.Channel).HasForeignKey(x => x.ChannelId);
+                e.HasOne<ChannelType>().WithMany(x => x.Channels).HasForeignKey(x => x.ChannelType);
+            });
+
+            modelBuilder.Entity<Message>(e =>
+            {
+                e.HasOne<MessageType>().WithMany(x => x.Messages).HasForeignKey(x => x.MessageType);
             });
 
             /* Enums */
             modelBuilder.Entity<ChannelType>().HasData(
                 EnumExtension.GetEnumAsArrayOutputs<ChannelTypes, ChannelType>(x => new ChannelType { Name = x })
             );
+
+            modelBuilder.Entity<MessageType>().HasData(
+                EnumExtension.GetEnumAsArrayOutputs<MessageTypes, MessageType>(x => new MessageType { Name = x })
+            );
         }
-    }
+    }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
 }

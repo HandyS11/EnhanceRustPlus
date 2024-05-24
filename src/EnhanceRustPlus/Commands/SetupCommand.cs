@@ -11,11 +11,8 @@ namespace EnhanceRustPlus.Commands
         [RequireRole("Rust+", Group = "Permission")]
         public async Task Setup()
         {
-            var roleId = await service.CreateRoleAsync(Context.Guild.Id);
-            var categoryId = await service.CreateCategoryAsync(Context.Guild.Id, roleId);
-            var channels = await service.CreateChannelsAsync(Context.Guild.Id, categoryId);
-
-            // TODO: Manage database to store the data
+            var setup = await service.SetupDiscord(Context.Guild.Id, "Rust+", "Rust+");
+            // ...
 
             var embed = new EmbedBuilder
             {

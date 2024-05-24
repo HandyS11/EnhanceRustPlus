@@ -7,9 +7,8 @@ namespace EnhanceRustPlus.EfCore.Entities
     public class Guild : IEntity
     {
         public ulong Id { get; set; }
-        public ulong CategoryId { get; set; }
-        public ulong? RoleId { get; set; }
 
-        public ICollection<Channel> Channels { get; set; } = null!;
+        public Category Category { get; set; } = null!;
+        public Role Role { get; set; } = null!;
     }
 }

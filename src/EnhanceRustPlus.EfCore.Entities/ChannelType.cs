@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace EnhanceRustPlus.EfCore.Entities.Types
+namespace EnhanceRustPlus.EfCore.Entities
 {
     [PrimaryKey(nameof(Name))]
     public class ChannelType
