@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace EfCore.Interfaces
+namespace EnhanceRustPlus.EfCore.Interfaces
 {
     public interface IRepositoryManager<T> : IDisposable where T : class
     {

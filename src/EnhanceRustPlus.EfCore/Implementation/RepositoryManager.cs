@@ -1,9 +1,9 @@
-﻿using EfCore.Interfaces;
+﻿using System.Linq.Expressions;
+using EnhanceRustPlus.EfCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Linq.Expressions;
 
-namespace EfCore.Implementation
+namespace EnhanceRustPlus.EfCore.Implementation
 {
     public sealed class RepositoryManager<T>(DbContext context, ILogger logger) : IRepositoryManager<T> where T : class
     {

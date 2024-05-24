@@ -1,10 +1,10 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using EnhanceRustPlus.Extensions;
-using EnhanceRustPlus.Interfaces;
+using EnhanceRustPlus.Business.Extensions;
+using EnhanceRustPlus.Business.Interfaces;
 using Microsoft.Extensions.Logging;
 
-namespace EnhanceRustPlus.Services
+namespace EnhanceRustPlus.Business.Services
 {
     // ReSharper disable once ClassNeverInstantiated.Global
     public class SetupService(DiscordSocketClient client, ILogger<SetupService> logger) : ISetupService

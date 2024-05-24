@@ -1,4 +1,4 @@
-﻿namespace EnhanceRustPlus.Interfaces
+﻿namespace EnhanceRustPlus.Business.Interfaces
 {
     public interface ICleanupService
     {

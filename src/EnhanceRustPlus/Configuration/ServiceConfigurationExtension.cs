@@ -1,8 +1,8 @@
-﻿using EfCore;
-using EfCore.Implementation;
-using EfCore.Interfaces;
-using EnhanceRustPlus.Interfaces;
-using EnhanceRustPlus.Services;
+﻿using EnhanceRustPlus.Business.Interfaces;
+using EnhanceRustPlus.Business.Services;
+using EnhanceRustPlus.EfCore.Context;
+using EnhanceRustPlus.EfCore.Implementation;
+using EnhanceRustPlus.EfCore.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

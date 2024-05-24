@@ -1,6 +1,6 @@
-﻿using EnhanceRustPlus.Interfaces;
+﻿using EnhanceRustPlus.Business.Interfaces;
 
-namespace EnhanceRustPlus.Services
+namespace EnhanceRustPlus.Business.Services
 {
     public class CleanupService : ICleanupService
     {

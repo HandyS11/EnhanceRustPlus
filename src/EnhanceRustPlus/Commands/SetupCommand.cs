@@ -1,6 +1,6 @@
 ﻿using Discord;
 using Discord.Interactions;
-using EnhanceRustPlus.Interfaces;
+using EnhanceRustPlus.Business.Interfaces;
 
 namespace EnhanceRustPlus.Commands
 {
@@ -14,6 +14,8 @@ namespace EnhanceRustPlus.Commands
             var roleId = await service.CreateRoleAsync(Context.Guild.Id);
             var categoryId = await service.CreateCategoryAsync(Context.Guild.Id, roleId);
             var channels = await service.CreateChannelsAsync(Context.Guild.Id, categoryId);
+
+            // TODO: Manage database to store the data
 
             var embed = new EmbedBuilder
             {

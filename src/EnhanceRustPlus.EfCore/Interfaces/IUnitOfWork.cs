@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace EfCore.Interfaces
+namespace EnhanceRustPlus.EfCore.Interfaces
 {
     public interface IUnitOfWork :IDisposable
     {

@@ -1,4 +1,4 @@
-﻿namespace EnhanceRustPlus.Exceptions
+﻿namespace EnhanceRustPlus.Business.Exceptions
 {
     public class BusinessException : Exception
     {

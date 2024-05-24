@@ -1,8 +1,8 @@
-﻿using EnhanceRustPlus.Exceptions;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using EnhanceRustPlus.Business.Exceptions;
 using Microsoft.Extensions.Logging;
 
-namespace EnhanceRustPlus.Extensions
+namespace EnhanceRustPlus.Business.Extensions
 {
     public static class LoggerExtension
     {
