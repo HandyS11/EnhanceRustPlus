@@ -8,6 +8,7 @@ namespace EnhanceRustPlus.EfCore.Interfaces
 
         void Save();
         Task<int> SaveAsync();
-        IRepositoryManager<T> GetRepositoryManager<T>() where T : class, new();
+        IRepositoryManager<TEntity> GetRepository<TEntity>()
+            where TEntity : class, new();
     }
 }

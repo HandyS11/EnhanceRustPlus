@@ -12,11 +12,11 @@ namespace EnhanceRustPlus.Commands
         public async Task Setup()
         {
             var setup = await service.SetupDiscord(Context.Guild.Id, "Rust+", "Rust+");
-            // ...
 
             var embed = new EmbedBuilder
             {
-                Description = "Setup completed"
+                Description = setup ? "Setup completed" : "Setup failed",
+                Color = setup ? Color.Green : Color.Red
             };
             await RespondAsync(embed: embed.Build(), ephemeral: true);
         }

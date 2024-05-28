@@ -18,5 +18,10 @@
         {
             return Enum.GetNames(typeof(TEnum));
         }
+
+        public static IEnumerable<TEnum> GetEnumAsArray<TEnum>() where TEnum : Enum
+        {
+            return Enum.GetValues(typeof(TEnum)).Cast<TEnum>();
+        }
     }
 }

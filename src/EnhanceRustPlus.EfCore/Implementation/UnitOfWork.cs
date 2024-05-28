@@ -48,15 +48,15 @@ namespace EnhanceRustPlus.EfCore.Implementation
             return nbOfRows;
         }
 
-        public IRepositoryManager<T> GetRepositoryManager<T>() where T : class, new()
+        public IRepositoryManager<TEntity> GetRepository<TEntity>() where TEntity : class, new()
         {
-            var type = typeof(IEntity);
-            if (_repositories.TryGetValue(type, out var value)) return (IRepositoryManager<T>)value;
+            var type = typeof(TEntity);
+            if (!_repositories.ContainsKey(type))
+            {
+                _repositories[type] = new RepositoryManager<TEntity>(DbContext, logger);
+            }
 
-            value = new RepositoryManager<IEntity>(DbContext, logger);
-            _repositories[type] = value;
-
-            return (IRepositoryManager<T>)value;
+            return (IRepositoryManager<TEntity>)_repositories[type];
         }
     }
 }

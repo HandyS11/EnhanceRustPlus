@@ -13,7 +13,7 @@ namespace EnhanceRustPlus.Business.Services
     // ReSharper disable once ClassNeverInstantiated.Global
     public class SetupService(DiscordSocketClient client, ILogger<SetupService> logger, IUnitOfWork uow) : ISetupService
     {
-        private readonly IRepositoryManager<Guild> _guildRepo = uow.GetRepositoryManager<Guild>();
+        private readonly IRepositoryManager<Guild> _guildRepo = uow.GetRepository<Guild>();
 
         public async Task<bool> SetupDiscord(ulong guildId, string roleName, string categoryName)
         {
@@ -101,7 +101,7 @@ namespace EnhanceRustPlus.Business.Services
             return category!.Id;
         }
 
-        private async Task<Dictionary<ulong, string>> CreateChannelsAsync(ulong guildId, ulong categoryId)
+        private async Task<Dictionary<ulong, ChannelTypes>> CreateChannelsAsync(ulong guildId, ulong categoryId)
         {
             logger.LogEnteringMethod();
 
@@ -110,7 +110,7 @@ namespace EnhanceRustPlus.Business.Services
             var names = Enum.GetNames(typeof(ChannelTypes));
             var channelNames = names.Select(x => x.ToLower().Replace('_', '-')).ToList();
 
-            var channels = new Dictionary<ulong, string>();
+            var channels = new Dictionary<ulong, ChannelTypes>();
 
             foreach (var name in channelNames)
             {
@@ -118,7 +118,9 @@ namespace EnhanceRustPlus.Business.Services
                 {
                     properties.CategoryId = categoryId;
                 });
-                channels.Add(channel.Id, channel.Name);
+
+                Enum.TryParse<ChannelTypes>(name, true, out var enumValue);
+                channels.Add(channel.Id, enumValue);
             }
 
             logger.LogExitingMethod();
