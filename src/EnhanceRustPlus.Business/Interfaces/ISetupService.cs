@@ -2,6 +2,6 @@
 {
     public interface ISetupService
     {
-        Task<bool> SetupDiscord(ulong guildId, string roleName, string categoryName);
+        Task SetupDiscord(ulong guildId, string roleName, string categoryName);
     }
 }

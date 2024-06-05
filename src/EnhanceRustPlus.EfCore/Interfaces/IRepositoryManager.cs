@@ -17,9 +17,9 @@ namespace EnhanceRustPlus.EfCore.Interfaces
         void UpdateRange(IEnumerable<T> entities);
         void UpdateRange(params T[] entities);
 
-        Task<T?> DeleteAsync(Guid id);
+        Task<T?> DeleteAsync(ulong id);
         T? Delete(T entity);
-        Task DeleteRangeAsync(IEnumerable<Guid> ids);
+        Task DeleteRangeAsync(IEnumerable<ulong> ids);
         void DeleteRange(IEnumerable<T> entities);
     }
 }

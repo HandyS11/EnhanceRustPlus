@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
+
 using EnhanceRustPlus.EfCore.Interfaces;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -119,7 +121,7 @@ namespace EnhanceRustPlus.EfCore.Implementation
             }
         }
 
-        public async Task<T?> DeleteAsync(Guid id)
+        public async Task<T?> DeleteAsync(ulong id)
         {
             try
             {
@@ -159,7 +161,7 @@ namespace EnhanceRustPlus.EfCore.Implementation
             }
         }
 
-        public async Task DeleteRangeAsync(IEnumerable<Guid> ids)
+        public async Task DeleteRangeAsync(IEnumerable<ulong> ids)
         {
             foreach (var id in ids)
             {

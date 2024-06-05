@@ -5,18 +5,17 @@ using EnhanceRustPlus.Business.Interfaces;
 
 namespace EnhanceRustPlus.Commands
 {
-    public class SetupCommand(ISetupService service) : InteractionModuleBase
+    public class CleanUpCommand(ICleanupService service) : InteractionModuleBase
     {
-        [SlashCommand("setup", "Setup the category, role, channels and messages to operate the application")]
+        [SlashCommand("clean-up", "Clean-up the category, role and channels")]
         [RequireUserPermission(GuildPermission.Administrator, Group = "Permission")]
-        [RequireRole("Rust+", Group = "Permission")]
-        public async Task Setup()
+        public async Task CleanUp()
         {
-            _ = service.SetupDiscord(Context.Guild.Id, "Rust+", "Rust+");
+            _ = service.CleanupAsync(Context.Guild.Id);
 
             var embed = new EmbedBuilder
             {
-                Description = "Setup started..",
+                Description = "Clean-up started..",
                 Color = Color.Green
             };
             await RespondAsync(embed: embed.Build(), ephemeral: true);

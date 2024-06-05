@@ -1,11 +1,13 @@
 ﻿using Discord;
 using Discord.WebSocket;
+
 using EnhanceRustPlus.Business.Exceptions;
 using EnhanceRustPlus.Business.Extensions;
 using EnhanceRustPlus.Business.Interfaces;
 using EnhanceRustPlus.Business.Models.Enums;
 using EnhanceRustPlus.EfCore.Entities;
 using EnhanceRustPlus.EfCore.Interfaces;
+
 using Microsoft.Extensions.Logging;
 
 namespace EnhanceRustPlus.Business.Services
@@ -15,7 +17,7 @@ namespace EnhanceRustPlus.Business.Services
     {
         private readonly IRepositoryManager<Guild> _guildRepo = uow.GetRepository<Guild>();
 
-        public async Task<bool> SetupDiscord(ulong guildId, string roleName, string categoryName)
+        public async Task SetupDiscord(ulong guildId, string roleName, string categoryName)
         {
             logger.LogEnteringMethod();
 
@@ -51,17 +53,13 @@ namespace EnhanceRustPlus.Business.Services
             catch (BusinessException e)
             {
                 logger.LogError(e, "Error setting up Discord");
-                return false;
             }
             catch (Exception e)
             {
                 logger.LogError(e, "Unknown Error");
-                return false;
             }
 
             logger.LogExitingMethod();
-
-            return true;
         }
 
         private async Task<ulong> CreateRoleAsync(ulong guildId, string roleName)
