@@ -1,6 +1,6 @@
 ﻿namespace EnhanceRustPlus.Configuration
 {
-    public class Config
+    public class BotSettings
     {
         public string Token { get; set; } = null!;
     }

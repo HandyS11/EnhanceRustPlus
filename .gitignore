@@ -1,5 +1,7 @@
 **/AppSettings.json
 
+**/*.db*
+
 # IDEA
 .idea/
 
