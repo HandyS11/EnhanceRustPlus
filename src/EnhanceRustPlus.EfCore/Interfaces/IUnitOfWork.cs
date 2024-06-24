@@ -2,7 +2,7 @@
 
 namespace EnhanceRustPlus.EfCore.Interfaces
 {
-    public interface IUnitOfWork :IDisposable
+    public interface IUnitOfWork : IDisposable
     {
         public DbContext DbContext { get; }
 
