@@ -4,7 +4,7 @@ using EnhanceRustPlus.Business.Extensions;
 using EnhanceRustPlus.Business.Interfaces;
 using EnhanceRustPlus.EfCore.Entities;
 using EnhanceRustPlus.EfCore.Interfaces;
-
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace EnhanceRustPlus.Business.Services
@@ -20,16 +20,23 @@ namespace EnhanceRustPlus.Business.Services
             try
             {
                 var guildDatabase = _guildRepo.GetAsIQueryable()
+                    .Include(x => x.Category)
+                        .ThenInclude(x => x.Channels)
+                    .Include(x => x.Role)
                     .FirstOrDefault(x => x.Id == guildId);
 
                 if (guildDatabase == null) logger.LogAndThrowBusinessException("Guild not found in database");
 
                 var guildDiscord = client.GetGuild(guildId);
 
+                if (guildDatabase?.Role == null) logger.LogAndThrowBusinessException("Role not found in database");
+
                 var role = guildDiscord.GetRole(guildDatabase!.Role.Id);
                 role?.DeleteAsync();
 
-                var channels = guildDatabase.Category.Channels;
+                if (guildDatabase?.Category == null) logger.LogAndThrowBusinessException("Category not found in database");
+
+                var channels = guildDatabase!.Category.Channels;
                 foreach (var channel in channels)
                 {
                     var channelDiscord = guildDiscord.GetChannel(channel.Id);
