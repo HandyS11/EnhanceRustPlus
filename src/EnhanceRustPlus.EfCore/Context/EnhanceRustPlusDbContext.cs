@@ -16,6 +16,8 @@ namespace EnhanceRustPlus.EfCore.Context
         public DbSet<ChannelType> ChannelTypes { get; set; }
         public DbSet<MessageType> MessageTypes { get; set; }
 
+        public DbSet<Credentials> Credentials { get; set; }
+
         public EnhanceRustPlusDbContext() { }
 
         public EnhanceRustPlusDbContext(DbContextOptions<EnhanceRustPlusDbContext> options) : base(options) { }
