@@ -127,7 +127,6 @@ namespace EnhanceRustPlus.EfCore.Migrations
                 columns: table => new
                 {
                     Id = table.Column<ulong>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
                     RoleId = table.Column<ulong>(type: "INTEGER", nullable: true),
                     GuildId = table.Column<ulong>(type: "INTEGER", nullable: false),
                     ServerId = table.Column<Guid>(type: "TEXT", nullable: false),

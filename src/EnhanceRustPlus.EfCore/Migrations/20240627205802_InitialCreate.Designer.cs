@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EnhanceRustPlus.EfCore.Migrations
 {
     [DbContext(typeof(EnhanceRustPlusDbContext))]
-    [Migration("20240627204113_InitialCreate")]
+    [Migration("20240627205802_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -30,10 +30,6 @@ namespace EnhanceRustPlus.EfCore.Migrations
 
                     b.Property<ulong?>("HosterId")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(30)
-                        .HasColumnType("TEXT");
 
                     b.Property<ulong?>("RoleId")
                         .HasColumnType("INTEGER");

@@ -28,10 +28,6 @@ namespace EnhanceRustPlus.EfCore.Migrations
                     b.Property<ulong?>("HosterId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(30)
-                        .HasColumnType("TEXT");
-
                     b.Property<ulong?>("RoleId")
                         .HasColumnType("INTEGER");
 
