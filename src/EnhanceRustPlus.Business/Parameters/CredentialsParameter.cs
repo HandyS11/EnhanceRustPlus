@@ -4,11 +4,20 @@ namespace EnhanceRustPlus.Business.Parameters
 {
     public class CredentialsParameter
     {
-        public string GcmAndroidId { get; set; } = null!;
-        public string GcmSecurityToken { get; set; } = null!;
-        public string PrivateKey { get; set; } = null!;
-        public string PublicKey { get; set; } = null!;
-        public string AuthSecret { get; set; } = null!;
+        public string GcmAndroidId { get; }
+        public string GcmSecurityToken { get; }
+        public string PrivateKey { get; }
+        public string PublicKey { get; }
+        public string AuthSecret { get; }
+
+        public CredentialsParameter()
+        {
+            GcmAndroidId = string.Empty;
+            GcmSecurityToken = string.Empty;
+            PrivateKey = string.Empty;
+            PublicKey = string.Empty;
+            AuthSecret = string.Empty;
+        }
 
         [ComplexParameterCtor]
         public CredentialsParameter(string gcmAndroidId, string gcmSecurityToken, string privateKey, string publicKey, string authSecret)

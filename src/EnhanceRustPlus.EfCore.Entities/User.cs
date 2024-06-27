@@ -13,8 +13,9 @@ namespace EnhanceRustPlus.EfCore.Entities
         public ulong SteamId { get; set; }
         [MaxLength(30)]
         public string Name { get; set; } = null!;
+        public string? Avatar { get; set; }
 
-        public Credential Credentials { get; set; } = null!;
+        public Credential? Credentials { get; set; }
 
         public ICollection<Guild> Guilds { get; set; } = null!;
         public ICollection<Server> Servers { get; set; } = null!;
