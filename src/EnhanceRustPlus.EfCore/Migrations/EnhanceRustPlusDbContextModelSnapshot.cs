@@ -25,13 +25,27 @@ namespace EnhanceRustPlus.EfCore.Migrations
                     b.Property<ulong>("GuildId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<ulong?>("HosterId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .HasMaxLength(30)
                         .HasColumnType("TEXT");
 
+                    b.Property<ulong?>("RoleId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("ServerId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("GuildId")
+                    b.HasIndex("GuildId");
+
+                    b.HasIndex("HosterId")
+                        .IsUnique();
+
+                    b.HasIndex("ServerId")
                         .IsUnique();
 
                     b.ToTable("Categories");
@@ -76,18 +90,6 @@ namespace EnhanceRustPlus.EfCore.Migrations
                         },
                         new
                         {
-                            Name = "SERVERS"
-                        },
-                        new
-                        {
-                            Name = "SETTINGS"
-                        },
-                        new
-                        {
-                            Name = "COMMANDS"
-                        },
-                        new
-                        {
                             Name = "EVENTS"
                         },
                         new
@@ -96,11 +98,15 @@ namespace EnhanceRustPlus.EfCore.Migrations
                         },
                         new
                         {
+                            Name = "ALARMS"
+                        },
+                        new
+                        {
                             Name = "SWITCHES"
                         },
                         new
                         {
-                            Name = "ALARMS"
+                            Name = "STORAGE_MONITOR"
                         },
                         new
                         {
@@ -135,7 +141,7 @@ namespace EnhanceRustPlus.EfCore.Migrations
 
                     b.HasKey("UserId");
 
-                    b.ToTable("Credentials");
+                    b.ToTable("UserCredentials");
                 });
 
             modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.Guild", b =>
@@ -143,19 +149,37 @@ namespace EnhanceRustPlus.EfCore.Migrations
                     b.Property<ulong>("Id")
                         .HasColumnType("INTEGER");
 
-                    b.Property<ulong?>("HosterId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid?>("ServerId")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("HosterId");
-
-                    b.HasIndex("ServerId");
-
                     b.ToTable("Guilds");
+                });
+
+            modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.GuildConfig", b =>
+                {
+                    b.Property<ulong>("GuildId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("CommandChannelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("MainCategoryId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("RolesId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("ServersChannelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("SettingsChannelId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<ulong>("UsersChannelId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("GuildId");
+
+                    b.ToTable("GuildConfigs");
                 });
 
             modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.GuildServer", b =>
@@ -243,26 +267,6 @@ namespace EnhanceRustPlus.EfCore.Migrations
                         });
                 });
 
-            modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.Role", b =>
-                {
-                    b.Property<ulong>("Id")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<ulong>("GuildId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(30)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GuildId")
-                        .IsUnique();
-
-                    b.ToTable("Roles");
-                });
-
             modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.Server", b =>
                 {
                     b.Property<Guid>("Id")
@@ -337,12 +341,24 @@ namespace EnhanceRustPlus.EfCore.Migrations
             modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.Category", b =>
                 {
                     b.HasOne("EnhanceRustPlus.EfCore.Entities.Guild", "Guild")
-                        .WithOne("Category")
-                        .HasForeignKey("EnhanceRustPlus.EfCore.Entities.Category", "GuildId")
+                        .WithMany("Categories")
+                        .HasForeignKey("GuildId");
+
+                    b.HasOne("EnhanceRustPlus.EfCore.Entities.User", "Hoster")
+                        .WithOne()
+                        .HasForeignKey("EnhanceRustPlus.EfCore.Entities.Category", "HosterId");
+
+                    b.HasOne("EnhanceRustPlus.EfCore.Entities.Server", "Server")
+                        .WithOne()
+                        .HasForeignKey("EnhanceRustPlus.EfCore.Entities.Category", "ServerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Guild");
+
+                    b.Navigation("Hoster");
+
+                    b.Navigation("Server");
                 });
 
             modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.Channel", b =>
@@ -373,19 +389,15 @@ namespace EnhanceRustPlus.EfCore.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.Guild", b =>
+            modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.GuildConfig", b =>
                 {
-                    b.HasOne("EnhanceRustPlus.EfCore.Entities.User", "Hoster")
-                        .WithMany("HosterIn")
-                        .HasForeignKey("HosterId");
+                    b.HasOne("EnhanceRustPlus.EfCore.Entities.Guild", "Guild")
+                        .WithOne("Config")
+                        .HasForeignKey("EnhanceRustPlus.EfCore.Entities.GuildConfig", "GuildId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("EnhanceRustPlus.EfCore.Entities.Server", "Server")
-                        .WithMany("ServerIn")
-                        .HasForeignKey("ServerId");
-
-                    b.Navigation("Hoster");
-
-                    b.Navigation("Server");
+                    b.Navigation("Guild");
                 });
 
             modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.GuildServer", b =>
@@ -443,17 +455,6 @@ namespace EnhanceRustPlus.EfCore.Migrations
                     b.Navigation("Channel");
                 });
 
-            modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.Role", b =>
-                {
-                    b.HasOne("EnhanceRustPlus.EfCore.Entities.Guild", "Guild")
-                        .WithOne("Role")
-                        .HasForeignKey("EnhanceRustPlus.EfCore.Entities.Role", "GuildId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Guild");
-                });
-
             modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.ServerUser", b =>
                 {
                     b.HasOne("EnhanceRustPlus.EfCore.Entities.Server", "Server")
@@ -490,15 +491,14 @@ namespace EnhanceRustPlus.EfCore.Migrations
 
             modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.Guild", b =>
                 {
-                    b.Navigation("Category")
+                    b.Navigation("Categories");
+
+                    b.Navigation("Config")
                         .IsRequired();
 
                     b.Navigation("GuildServers");
 
                     b.Navigation("GuildUsers");
-
-                    b.Navigation("Role")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.MessageType", b =>
@@ -510,8 +510,6 @@ namespace EnhanceRustPlus.EfCore.Migrations
                 {
                     b.Navigation("GuildServers");
 
-                    b.Navigation("ServerIn");
-
                     b.Navigation("ServerUsers");
                 });
 
@@ -521,8 +519,6 @@ namespace EnhanceRustPlus.EfCore.Migrations
                         .IsRequired();
 
                     b.Navigation("GuildUsers");
-
-                    b.Navigation("HosterIn");
 
                     b.Navigation("ServerUsers");
                 });

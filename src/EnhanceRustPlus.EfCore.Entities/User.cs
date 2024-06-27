@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EnhanceRustPlus.EfCore.Entities
 {
     [PrimaryKey(nameof(Id))]
-    public class User : IEntity
+    public class User : IDiscordEntity
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public ulong Id { get; set; }
@@ -21,7 +21,5 @@ namespace EnhanceRustPlus.EfCore.Entities
 
         public ICollection<ServerUser> ServerUsers { get; set; } = null!;
         public ICollection<GuildUser> GuildUsers { get; set; } = null!;
-
-        public ICollection<Guild> HosterIn { get; set; } = null!;
     }
 }

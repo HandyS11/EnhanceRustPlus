@@ -24,7 +24,5 @@ namespace EnhanceRustPlus.EfCore.Entities
 
         public ICollection<GuildServer> GuildServers { get; set; } = null!;
         public ICollection<ServerUser> ServerUsers { get; set; } = null!;
-
-        public ICollection<Guild> ServerIn { get; set; } = null!;
     }
 }

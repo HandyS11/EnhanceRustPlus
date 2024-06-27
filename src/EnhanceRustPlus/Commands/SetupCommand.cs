@@ -9,7 +9,6 @@ namespace EnhanceRustPlus.Commands
     {
         [SlashCommand("setup", "Setup the category, role, channels and messages to operate the application")]
         [RequireUserPermission(GuildPermission.Administrator, Group = "Permission")]
-        [RequireRole("Rust+", Group = "Permission")]
         public async Task Setup()
         {
             _ = service.SetupDiscord(Context.Guild.Id, "Rust+", "Rust+");

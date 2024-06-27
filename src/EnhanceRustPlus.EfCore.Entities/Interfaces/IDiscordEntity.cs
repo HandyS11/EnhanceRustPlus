@@ -1,6 +1,6 @@
 ﻿namespace EnhanceRustPlus.EfCore.Entities.Interfaces
 {
-    public interface IEntity
+    public interface IDiscordEntity
     {
         public ulong Id { get; set; }
     }

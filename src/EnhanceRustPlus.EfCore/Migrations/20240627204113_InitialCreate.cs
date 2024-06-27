@@ -23,6 +23,17 @@ namespace EnhanceRustPlus.EfCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Guilds",
+                columns: table => new
+                {
+                    Id = table.Column<ulong>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Guilds", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MessageTypes",
                 columns: table => new
                 {
@@ -65,88 +76,22 @@ namespace EnhanceRustPlus.EfCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Credentials",
+                name: "GuildConfigs",
                 columns: table => new
                 {
-                    UserId = table.Column<ulong>(type: "INTEGER", nullable: false),
-                    GcmAndroidId = table.Column<string>(type: "TEXT", nullable: false),
-                    GcmSecurityToken = table.Column<string>(type: "TEXT", nullable: false),
-                    PrivateKey = table.Column<string>(type: "TEXT", nullable: false),
-                    PublicKey = table.Column<string>(type: "TEXT", nullable: false),
-                    AuthSecret = table.Column<string>(type: "TEXT", nullable: false)
+                    GuildId = table.Column<ulong>(type: "INTEGER", nullable: false),
+                    RolesId = table.Column<ulong>(type: "INTEGER", nullable: false),
+                    MainCategoryId = table.Column<ulong>(type: "INTEGER", nullable: false),
+                    ServersChannelId = table.Column<ulong>(type: "INTEGER", nullable: false),
+                    UsersChannelId = table.Column<ulong>(type: "INTEGER", nullable: false),
+                    SettingsChannelId = table.Column<ulong>(type: "INTEGER", nullable: false),
+                    CommandChannelId = table.Column<ulong>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Credentials", x => x.UserId);
+                    table.PrimaryKey("PK_GuildConfigs", x => x.GuildId);
                     table.ForeignKey(
-                        name: "FK_Credentials_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Guilds",
-                columns: table => new
-                {
-                    Id = table.Column<ulong>(type: "INTEGER", nullable: false),
-                    HosterId = table.Column<ulong>(type: "INTEGER", nullable: true),
-                    ServerId = table.Column<Guid>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Guilds", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Guilds_Servers_ServerId",
-                        column: x => x.ServerId,
-                        principalTable: "Servers",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Guilds_Users_HosterId",
-                        column: x => x.HosterId,
-                        principalTable: "Users",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ServerUser",
-                columns: table => new
-                {
-                    ServerId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    UserId = table.Column<ulong>(type: "INTEGER", nullable: false),
-                    PlayerToken = table.Column<string>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ServerUser", x => new { x.ServerId, x.UserId });
-                    table.ForeignKey(
-                        name: "FK_ServerUser_Servers_ServerId",
-                        column: x => x.ServerId,
-                        principalTable: "Servers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ServerUser_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Categories",
-                columns: table => new
-                {
-                    Id = table.Column<ulong>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
-                    GuildId = table.Column<ulong>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Categories_Guilds_GuildId",
+                        name: "FK_GuildConfigs_Guilds_GuildId",
                         column: x => x.GuildId,
                         principalTable: "Guilds",
                         principalColumn: "Id",
@@ -178,6 +123,38 @@ namespace EnhanceRustPlus.EfCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<ulong>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
+                    RoleId = table.Column<ulong>(type: "INTEGER", nullable: true),
+                    GuildId = table.Column<ulong>(type: "INTEGER", nullable: false),
+                    ServerId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    HosterId = table.Column<ulong>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Categories_Guilds_GuildId",
+                        column: x => x.GuildId,
+                        principalTable: "Guilds",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Categories_Servers_ServerId",
+                        column: x => x.ServerId,
+                        principalTable: "Servers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Categories_Users_HosterId",
+                        column: x => x.HosterId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GuildUser",
                 columns: table => new
                 {
@@ -202,20 +179,48 @@ namespace EnhanceRustPlus.EfCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Roles",
+                name: "ServerUser",
                 columns: table => new
                 {
-                    Id = table.Column<ulong>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 30, nullable: true),
-                    GuildId = table.Column<ulong>(type: "INTEGER", nullable: false)
+                    ServerId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    UserId = table.Column<ulong>(type: "INTEGER", nullable: false),
+                    PlayerToken = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.PrimaryKey("PK_ServerUser", x => new { x.ServerId, x.UserId });
                     table.ForeignKey(
-                        name: "FK_Roles_Guilds_GuildId",
-                        column: x => x.GuildId,
-                        principalTable: "Guilds",
+                        name: "FK_ServerUser_Servers_ServerId",
+                        column: x => x.ServerId,
+                        principalTable: "Servers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ServerUser_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserCredentials",
+                columns: table => new
+                {
+                    UserId = table.Column<ulong>(type: "INTEGER", nullable: false),
+                    GcmAndroidId = table.Column<string>(type: "TEXT", nullable: false),
+                    GcmSecurityToken = table.Column<string>(type: "TEXT", nullable: false),
+                    PrivateKey = table.Column<string>(type: "TEXT", nullable: false),
+                    PublicKey = table.Column<string>(type: "TEXT", nullable: false),
+                    AuthSecret = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserCredentials", x => x.UserId);
+                    table.ForeignKey(
+                        name: "FK_UserCredentials_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -277,11 +282,9 @@ namespace EnhanceRustPlus.EfCore.Migrations
                 {
                     "ACTIVITY",
                     "ALARMS",
-                    "COMMANDS",
                     "EVENTS",
                     "INFORMATION",
-                    "SERVERS",
-                    "SETTINGS",
+                    "STORAGE_MONITOR",
                     "SWITCHES",
                     "TEAM_CHAT"
                 });
@@ -301,7 +304,18 @@ namespace EnhanceRustPlus.EfCore.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Categories_GuildId",
                 table: "Categories",
-                column: "GuildId",
+                column: "GuildId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_HosterId",
+                table: "Categories",
+                column: "HosterId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_ServerId",
+                table: "Categories",
+                column: "ServerId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -313,16 +327,6 @@ namespace EnhanceRustPlus.EfCore.Migrations
                 name: "IX_Channels_ChannelType",
                 table: "Channels",
                 column: "ChannelType");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Guilds_HosterId",
-                table: "Guilds",
-                column: "HosterId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Guilds_ServerId",
-                table: "Guilds",
-                column: "ServerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_GuildServer_ServerId",
@@ -345,12 +349,6 @@ namespace EnhanceRustPlus.EfCore.Migrations
                 column: "MessageType");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Roles_GuildId",
-                table: "Roles",
-                column: "GuildId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ServerUser_UserId",
                 table: "ServerUser",
                 column: "UserId");
@@ -360,7 +358,7 @@ namespace EnhanceRustPlus.EfCore.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Credentials");
+                name: "GuildConfigs");
 
             migrationBuilder.DropTable(
                 name: "GuildServer");
@@ -372,10 +370,10 @@ namespace EnhanceRustPlus.EfCore.Migrations
                 name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "ServerUser");
 
             migrationBuilder.DropTable(
-                name: "ServerUser");
+                name: "UserCredentials");
 
             migrationBuilder.DropTable(
                 name: "Channels");

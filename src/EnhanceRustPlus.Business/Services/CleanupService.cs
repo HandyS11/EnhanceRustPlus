@@ -20,31 +20,52 @@ namespace EnhanceRustPlus.Business.Services
             try
             {
                 var guildDatabase = _guildRepo.GetAsIQueryable()
-                    .Include(x => x.Category)
+                    .Include(x => x.Config)
+                    .Include(x => x.Categories)
                         .ThenInclude(x => x.Channels)
-                    .Include(x => x.Role)
                     .FirstOrDefault(x => x.Id == guildId);
 
                 if (guildDatabase == null) logger.LogAndThrowBusinessException("Guild not found in database");
 
                 var guildDiscord = client.GetGuild(guildId);
+                if (guildDiscord == null) logger.LogAndThrowBusinessException("Guild not found in Discord");
 
-                if (guildDatabase?.Role == null) logger.LogAndThrowBusinessException("Role not found in database");
-
-                var role = guildDiscord.GetRole(guildDatabase!.Role.Id);
+                var role = guildDiscord!.GetRole(guildDatabase!.Config.RolesId);
                 role?.DeleteAsync();
 
-                if (guildDatabase?.Category == null) logger.LogAndThrowBusinessException("Category not found in database");
-
-                var channels = guildDatabase!.Category.Channels;
-                foreach (var channel in channels)
+                foreach (var category in guildDatabase.Categories)
                 {
-                    var channelDiscord = guildDiscord.GetChannel(channel.Id);
-                    channelDiscord?.DeleteAsync();
+                    var channels = guildDatabase!.Categories?.SelectMany(x => x.Channels).ToList();
+                    if (channels is not null)
+                    {
+                        foreach (var channel in channels)
+                        {
+                            var channelDiscord = guildDiscord.GetChannel(channel.Id);
+                            channelDiscord?.DeleteAsync();
+                        }
+                    }
+
+                    if (category.RoleId is not null)
+                    {
+                        var categoryRole = guildDiscord.GetRole((ulong)category.RoleId);
+                        categoryRole?.DeleteAsync();
+                    }
+
+                    var categoryDiscord = guildDiscord.GetCategoryChannel(category.Id);
+                    categoryDiscord?.DeleteAsync();
                 }
 
-                var category = guildDiscord.GetCategoryChannel(guildDatabase.Category.Id);
-                category?.DeleteAsync();
+                var serverChannel = guildDiscord.GetChannel(guildDatabase!.Config.ServersChannelId);
+                serverChannel?.DeleteAsync();
+                var userChannel = guildDiscord.GetChannel(guildDatabase!.Config.UsersChannelId);
+                userChannel?.DeleteAsync();
+                var settingsChannel = guildDiscord.GetChannel(guildDatabase!.Config.SettingsChannelId);
+                settingsChannel?.DeleteAsync();
+                var commandChannel = guildDiscord.GetChannel(guildDatabase!.Config.CommandChannelId);
+                commandChannel?.DeleteAsync();
+
+                var mainCategory = guildDiscord.GetCategoryChannel(guildDatabase!.Config.MainCategoryId);
+                mainCategory?.DeleteAsync();
 
                 await _guildRepo.DeleteAsync(guildDatabase.Id);
                 await uow.SaveAsync();

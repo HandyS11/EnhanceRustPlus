@@ -4,7 +4,6 @@ using Discord.WebSocket;
 using EnhanceRustPlus.Business.Exceptions;
 using EnhanceRustPlus.Business.Extensions;
 using EnhanceRustPlus.Business.Interfaces;
-using EnhanceRustPlus.Business.Models.Enums;
 using EnhanceRustPlus.EfCore.Entities;
 using EnhanceRustPlus.EfCore.Interfaces;
 
@@ -24,27 +23,24 @@ namespace EnhanceRustPlus.Business.Services
             try
             {
                 var roleId = await CreateRoleAsync(guildId, roleName);
-                var categoryId = await CreateCategoryAsync(guildId, roleId, categoryName);
-                var channels = await CreateChannelsAsync(guildId, categoryId);
+                var mainCategoryId = await CreateCategoryAsync(guildId, roleId, categoryName);
+                var basicChannels = await CreateBasicsChannelsAsync(guildId, mainCategoryId);
+
+                var guildConfig = new GuildConfig
+                {
+                    GuildId = guildId,
+                    RolesId = roleId,
+                    MainCategoryId = mainCategoryId,
+                    ServersChannelId = basicChannels[0],
+                    UsersChannelId = basicChannels[1],
+                    SettingsChannelId = basicChannels[2],
+                    CommandChannelId = basicChannels[3]
+                };
 
                 var guild = new Guild
                 {
                     Id = guildId,
-                    Role = new Role
-                    {
-                        Id = roleId,
-                        Name = roleName
-                    },
-                    Category = new Category
-                    {
-                        Id = categoryId,
-                        Name = categoryName,
-                        Channels = channels.Select(x => new Channel
-                        {
-                            Id = x.Key,
-                            ChannelType = x.Value
-                        }).ToList()
-                    }
+                    Config = guildConfig,
                 };
 
                 await _guildRepo.AddAsync(guild);
@@ -64,22 +60,15 @@ namespace EnhanceRustPlus.Business.Services
 
         private async Task<ulong> CreateRoleAsync(ulong guildId, string roleName)
         {
-            logger.LogEnteringMethod();
-
             var guild = client.GetGuild(guildId);
             var role = await guild.CreateRoleAsync(roleName);
 
             if (role == null) logger.LogAndThrowBusinessException("Role could not be created");
 
-            logger.LogExitingMethod();
-
             return role!.Id;
         }
-
         private async Task<ulong> CreateCategoryAsync(ulong guildId, ulong roleId, string categoryName)
         {
-            logger.LogEnteringMethod();
-
             var guild = client.GetGuild(guildId);
 
             var category = await guild.CreateCategoryChannelAsync(categoryName, properties =>
@@ -94,12 +83,35 @@ namespace EnhanceRustPlus.Business.Services
 
             if (category == null) logger.LogAndThrowBusinessException("Category could not be created");
 
-            logger.LogExitingMethod();
-
             return category!.Id;
         }
 
-        private async Task<Dictionary<ulong, ChannelTypes>> CreateChannelsAsync(ulong guildId, ulong categoryId)
+        private async Task<List<ulong>> CreateBasicsChannelsAsync(ulong guildId, ulong categoryId)
+        {
+            var guild = client.GetGuild(guildId);
+
+            var channels = new List<ulong>();
+            List<string> channelNames = [
+                "servers",
+                "users",
+                "settings",
+                "commands"
+            ];
+
+            foreach (var name in channelNames)
+            {
+                var channel = await guild.CreateTextChannelAsync(name, properties =>
+                {
+                    properties.CategoryId = categoryId;
+                });
+
+                channels.Add(channel.Id);
+            }
+
+            return channels;
+        }
+
+        /*private async Task<Dictionary<ulong, ChannelTypes>> CreateChannelsAsync(ulong guildId, ulong categoryId)
         {
             logger.LogEnteringMethod();
 
@@ -129,6 +141,6 @@ namespace EnhanceRustPlus.Business.Services
         private Task<Dictionary<ulong, string>> CreateSettingsMessagesAsync(ulong guildId)
         {
             throw new NotImplementedException();
-        }
+        }*/
     }
 }
