@@ -29,7 +29,7 @@ namespace EnhanceRustPlus
             {
                 Log.Information("Starting up");
 
-                _client = new DiscordSocketClient(new DiscordSocketConfig()
+                _client = new DiscordSocketClient(new DiscordSocketConfig
                 {
                     UseInteractionSnowflakeDate = false
                 });

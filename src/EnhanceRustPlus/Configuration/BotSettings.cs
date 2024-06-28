@@ -1,4 +1,5 @@
-﻿namespace EnhanceRustPlus.Configuration
+﻿// ReSharper disable ClassNeverInstantiated.Global
+namespace EnhanceRustPlus.Configuration
 {
     public class BotSettings
     {
@@ -9,6 +10,6 @@
     public class EncryptionSettings
     {
         public string Key { get; set; } = null!;
-        public string IV { get; set; } = null!;
+        public string Iv { get; set; } = null!;
     }
 }

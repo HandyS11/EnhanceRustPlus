@@ -10,23 +10,23 @@ namespace EnhanceRustPlus.Commands
     public class UserGroupCommand(IUserService userService) : InteractionModuleBase<SocketInteractionContext>
     {
         [SlashCommand("create", "Add a user")]
-        public async Task CreateUser(ulong steamId, ulong discordId = 0, string? name = null)
+        public async Task CreateUser(ulong steamId, ulong discordId = 0, string? name = null, string? avatar = null)
         {
             if (discordId == 0) discordId = Context.User.Id;
             name ??= Context.User.Username;
+            avatar ??= Context.User.GetAvatarUrl();
 
-            var result = await userService.CreateUser(discordId, steamId, name);
+            var result = await userService.CreateUser(discordId, steamId, name, avatar);
 
             await RespondAsync(result ? "User added" : "Error: Failed to add user", ephemeral: true);
         }
 
         [SlashCommand("update", "Update a user")]
-        public async Task UpdateUser(ulong discordId, ulong steamId = 0, string? name = null)
+        public async Task UpdateUser(ulong discordId, ulong steamId, string? name = null, string? avatar = null)
         {
             if (discordId == 0) discordId = Context.User.Id;
-            name ??= Context.User.Username;
 
-            var result = await userService.UpdateUser(discordId, steamId, name);
+            var result = await userService.UpdateUser(discordId, steamId, name, avatar);
 
             await RespondAsync(result ? "User updated" : "Error: Failed to update user", ephemeral: true);
         }

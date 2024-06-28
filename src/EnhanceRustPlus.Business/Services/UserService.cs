@@ -22,8 +22,9 @@ namespace EnhanceRustPlus.Business.Services
         /// <param name="discordId">The Discord ID of the user.</param>
         /// <param name="steamId">The Steam ID of the user.</param>
         /// <param name="name">The name of the user.</param>
+        /// <param name="avatar"></param>
         /// <returns>Returns true if the user is created successfully, otherwise false.</returns>
-        public async Task<bool> CreateUser(ulong discordId, ulong steamId, string name)
+        public async Task<bool> CreateUser(ulong discordId, ulong steamId, string name, string avatar)
         {
             logger.LogEnteringMethod();
 
@@ -33,7 +34,8 @@ namespace EnhanceRustPlus.Business.Services
                 {
                     Id = discordId,
                     SteamId = steamId,
-                    Name = name
+                    Name = name,
+                    Avatar = avatar
                 };
 
                 await _userRepo.AddAsync(user);
@@ -61,8 +63,9 @@ namespace EnhanceRustPlus.Business.Services
         /// <param name="discordId">The Discord ID of the user.</param>
         /// <param name="steamId">The new Steam ID of the user. If not provided, the Steam ID will not be updated.</param>
         /// <param name="name">The new name of the user. If not provided, the name will not be updated.</param>
+        /// <param name="avatar"></param>
         /// <returns>Returns true if the user is updated successfully, otherwise false.</returns>
-        public async Task<bool> UpdateUser(ulong discordId, ulong steamId = 0, string? name = null)
+        public async Task<bool> UpdateUser(ulong discordId, ulong steamId = 0, string? name = null, string? avatar = null)
         {
             logger.LogEnteringMethod();
 
@@ -73,6 +76,7 @@ namespace EnhanceRustPlus.Business.Services
 
                 if (steamId != 0) user.SteamId = steamId;
                 if (name != null) user.Name = name;
+                if (avatar != null) user.Avatar = avatar;
 
                 _userRepo.Update(user);
                 await uow.SaveAsync();
