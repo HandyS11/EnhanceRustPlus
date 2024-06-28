@@ -6,6 +6,7 @@
         INFO_INFORMATION,
         INFO_EVENT,
         INFO_TEAM,
+
         SETTINGS_TITLE,
     }
 }

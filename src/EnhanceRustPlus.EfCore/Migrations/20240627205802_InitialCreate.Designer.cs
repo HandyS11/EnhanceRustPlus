@@ -3,6 +3,7 @@ using System;
 using EnhanceRustPlus.EfCore.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EnhanceRustPlus.EfCore.Migrations
 {
     [DbContext(typeof(EnhanceRustPlusDbContext))]
-    partial class EnhanceRustPlusDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240627205802_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
@@ -321,9 +324,6 @@ namespace EnhanceRustPlus.EfCore.Migrations
                     b.Property<ulong>("Id")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Avatar")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(30)
@@ -514,7 +514,8 @@ namespace EnhanceRustPlus.EfCore.Migrations
 
             modelBuilder.Entity("EnhanceRustPlus.EfCore.Entities.User", b =>
                 {
-                    b.Navigation("Credentials");
+                    b.Navigation("Credentials")
+                        .IsRequired();
 
                     b.Navigation("GuildUsers");
 

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace EnhanceRustPlus.EfCore.Entities
 {
     [PrimaryKey(nameof(Id))]
-    public class Channel : IEntity
+    public class Channel : IDiscordEntity
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public ulong Id { get; set; }

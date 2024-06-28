@@ -9,7 +9,6 @@ namespace EnhanceRustPlus.Commands
     {
         [SlashCommand("setup", "Setup the category, role, channels and messages to operate the application")]
         [RequireUserPermission(GuildPermission.Administrator, Group = "Permission")]
-        [RequireRole("Rust+", Group = "Permission")]
         public async Task Setup()
         {
             _ = service.SetupDiscord(Context.Guild.Id, "Rust+", "Rust+");
@@ -17,7 +16,7 @@ namespace EnhanceRustPlus.Commands
             var embed = new EmbedBuilder
             {
                 Description = "Setup started..",
-                Color = Color.Green
+                Color = Color.Green,
             };
             await RespondAsync(embed: embed.Build(), ephemeral: true);
         }

@@ -3,13 +3,11 @@
     public enum ChannelTypes
     {
         INFORMATION,
-        SERVERS,
-        SETTINGS,
-        COMMANDS,
         EVENTS,
         TEAM_CHAT,
-        SWITCHES,
         ALARMS,
+        SWITCHES,
+        STORAGE_MONITOR,
         ACTIVITY
     }
 }

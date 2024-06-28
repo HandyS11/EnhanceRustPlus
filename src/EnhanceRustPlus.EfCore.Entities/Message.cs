@@ -7,7 +7,7 @@ using EnhanceRustPlus.Business.Models.Enums;
 namespace EnhanceRustPlus.EfCore.Entities
 {
     [PrimaryKey(nameof(Id))]
-    public class Message : IEntity
+    public class Message : IDiscordEntity
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public ulong Id { get; set; }

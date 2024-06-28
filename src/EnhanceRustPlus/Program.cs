@@ -29,7 +29,7 @@ namespace EnhanceRustPlus
             {
                 Log.Information("Starting up");
 
-                _client = new DiscordSocketClient(new DiscordSocketConfig()
+                _client = new DiscordSocketClient(new DiscordSocketConfig
                 {
                     UseInteractionSnowflakeDate = false
                 });
@@ -61,7 +61,7 @@ namespace EnhanceRustPlus
 
                 var config = _serviceProvider.GetRequiredService<BotSettings>();
 
-                await _client.LoginAsync(TokenType.Bot, config.Token);
+                await _client.LoginAsync(TokenType.Bot, config.DiscordBotToken);
                 await _client.StartAsync();
 
                 await interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _serviceProvider);

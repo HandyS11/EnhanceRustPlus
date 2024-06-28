@@ -37,7 +37,7 @@ namespace EnhanceRustPlus.EfCore.Implementation
         {
             var entries = DbContext.ChangeTracker
                 .Entries()
-                .Where(e => e is { Entity: IEntity, State: EntityState.Added or EntityState.Modified });
+                .Where(e => e is { Entity: IDiscordEntity, State: EntityState.Added or EntityState.Modified });
 
             var nbOfRows = await DbContext.SaveChangesAsync();
             foreach (var entry in DbContext.ChangeTracker.Entries())
