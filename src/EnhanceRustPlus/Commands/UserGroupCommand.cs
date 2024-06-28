@@ -9,8 +9,8 @@ namespace EnhanceRustPlus.Commands
     [RequireUserPermission(GuildPermission.Administrator, Group = "Permission")]
     public class UserGroupCommand(IUserService userService) : InteractionModuleBase<SocketInteractionContext>
     {
-        [SlashCommand("add", "Add a user")]
-        public async Task AddUser(ulong steamId, ulong discordId = 0, string? name = null)
+        [SlashCommand("create", "Add a user")]
+        public async Task CreateUser(ulong steamId, ulong discordId = 0, string? name = null)
         {
             if (discordId == 0) discordId = Context.User.Id;
             name ??= Context.User.Username;
@@ -18,6 +18,17 @@ namespace EnhanceRustPlus.Commands
             var result = await userService.CreateUser(discordId, steamId, name);
 
             await RespondAsync(result ? "User added" : "Error: Failed to add user", ephemeral: true);
+        }
+
+        [SlashCommand("update", "Update a user")]
+        public async Task UpdateUser(ulong discordId, ulong steamId = 0, string? name = null)
+        {
+            if (discordId == 0) discordId = Context.User.Id;
+            name ??= Context.User.Username;
+
+            var result = await userService.UpdateUser(discordId, steamId, name);
+
+            await RespondAsync(result ? "User updated" : "Error: Failed to update user", ephemeral: true);
         }
 
         [SlashCommand("register", "Register a user to a guild")]
@@ -31,13 +42,23 @@ namespace EnhanceRustPlus.Commands
             await RespondAsync(result ? "User registered" : "Error: Failed to register user", ephemeral: true);
         }
 
-        [SlashCommand("remove", "Remove a user")]
-        public async Task RemoveUser(ulong discordId = 0)
+        [SlashCommand("unregister", "Unregister a user from a guild")]
+        public async Task UnregisterUser(ulong discordId = 0, ulong guildId = 0)
         {
-            if (discordId == 0)
-                discordId = Context.User.Id;
+            if (discordId == 0) discordId = Context.User.Id;
+            if (guildId == 0) guildId = Context.Guild.Id;
 
-            var result = await userService.RemoveUser(discordId);
+            var result = await userService.UnregisterUser(discordId, guildId);
+
+            await RespondAsync(result ? "User unregistered" : "Error: Failed to unregister user", ephemeral: true);
+        }
+
+        [SlashCommand("delete", "Remove a user")]
+        public async Task DeleteUser(ulong discordId = 0)
+        {
+            if (discordId == 0) discordId = Context.User.Id;
+
+            var result = await userService.DeleteUser(discordId);
 
             await RespondAsync(result ? "User removed" : "Error: Failed to remove user", ephemeral: true);
         }
@@ -46,10 +67,9 @@ namespace EnhanceRustPlus.Commands
         public class CredentialsGroupCommand(ICredentialService credentialService) : InteractionModuleBase<SocketInteractionContext>
         {
             [SlashCommand("set", "Set the credentials for a user")]
-            public async Task SetCredentials(CredentialsParameter credentials, ulong discordId = 0)
+            public async Task SetCredentials([ComplexParameter] CredentialsParameter credentials, ulong discordId = 0)
             {
-                if (discordId == 0)
-                    discordId = Context.User.Id;
+                if (discordId == 0) discordId = Context.User.Id;
 
                 var result = await credentialService.SetCredentials(discordId, credentials);
 
@@ -59,8 +79,7 @@ namespace EnhanceRustPlus.Commands
             [SlashCommand("remove", "Remove credentials for a user")]
             public async Task RemoveCredentials(ulong discordId = 0)
             {
-                if (discordId == 0)
-                    discordId = Context.User.Id;
+                if (discordId == 0) discordId = Context.User.Id;
 
                 var result = await credentialService.RemoveCredentials(discordId);
 

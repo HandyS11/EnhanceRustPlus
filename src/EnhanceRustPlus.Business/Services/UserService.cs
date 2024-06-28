@@ -56,6 +56,44 @@ namespace EnhanceRustPlus.Business.Services
         }
 
         /// <summary>
+        /// Updates the user with the specified Discord ID.
+        /// </summary>
+        /// <param name="discordId">The Discord ID of the user.</param>
+        /// <param name="steamId">The new Steam ID of the user. If not provided, the Steam ID will not be updated.</param>
+        /// <param name="name">The new name of the user. If not provided, the name will not be updated.</param>
+        /// <returns>Returns true if the user is updated successfully, otherwise false.</returns>
+        public async Task<bool> UpdateUser(ulong discordId, ulong steamId = 0, string? name = null)
+        {
+            logger.LogEnteringMethod();
+
+            try
+            {
+                var user = _userRepo.GetAsIQueryable().FirstOrDefault(x => x.Id == discordId);
+                if (user == null) throw new BusinessException("User not found");
+
+                if (steamId != 0) user.SteamId = steamId;
+                if (name != null) user.Name = name;
+
+                _userRepo.Update(user);
+                await uow.SaveAsync();
+            }
+            catch (BusinessException e)
+            {
+                logger.LogError(e, "Error updating user");
+                return false;
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Unknown Error");
+                return false;
+            }
+
+            logger.LogExitingMethod();
+
+            return true;
+        }
+
+        /// <summary>
         /// Registers a user to a guild.
         /// </summary>
         /// <param name="discordId">The Discord ID of the user.</param>
@@ -101,11 +139,45 @@ namespace EnhanceRustPlus.Business.Services
         }
 
         /// <summary>
-        /// Removes the user with the specified Discord ID.
+        /// Unregisters a user from a guild.
         /// </summary>
-        /// <param name="discordId">The Discord ID of the user to remove.</param>
-        /// <returns>Returns true if the user is removed successfully, otherwise false.</returns>
-        public async Task<bool> RemoveUser(ulong discordId)
+        /// <param name="discordId">The Discord ID of the user.</param>
+        /// <param name="guildId">The ID of the guild.</param>
+        /// <returns>Returns true if the user is unregistered successfully, otherwise false.</returns>
+        public async Task<bool> UnregisterUser(ulong discordId, ulong guildId)
+        {
+            logger.LogEnteringMethod();
+
+            try
+            {
+                var userGuild = _guildUserRepo.GetAsIQueryable().FirstOrDefault(x => x.GuildId == guildId && x.UserId == discordId);
+                if (userGuild == null) throw new BusinessException("User not registered to the guild");
+
+                _guildUserRepo.Delete(userGuild);
+                await uow.SaveAsync();
+            }
+            catch (BusinessException e)
+            {
+                logger.LogError(e, "Error unregistering user");
+                return false;
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Unknown Error");
+                return false;
+            }
+
+            logger.LogExitingMethod();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Deletes a user with the specified Discord ID.
+        /// </summary>
+        /// <param name="discordId">The Discord ID of the user to delete.</param>
+        /// <returns>Returns true if the user is deleted successfully, otherwise false.</returns>
+        public async Task<bool> DeleteUser(ulong discordId)
         {
             logger.LogEnteringMethod();
 
@@ -113,6 +185,9 @@ namespace EnhanceRustPlus.Business.Services
             {
                 var user = _userRepo.GetAsIQueryable().FirstOrDefault(x => x.Id == discordId);
                 if (user == null) throw new BusinessException("User not found");
+
+                var userGuilds = _guildUserRepo.GetAsIQueryable().Where(x => x.UserId == discordId).ToList();
+                userGuilds.ForEach(x => _guildUserRepo.Delete(x));
 
                 _userRepo.Delete(user);
                 await uow.SaveAsync();

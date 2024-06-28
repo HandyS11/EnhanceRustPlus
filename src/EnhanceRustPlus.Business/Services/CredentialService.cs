@@ -12,7 +12,7 @@ namespace EnhanceRustPlus.Business.Services
     /// <summary>
     /// Service class for managing user credentials.
     /// </summary>
-    public class CredentialService(ILogger<CredentialService> logger, IUnitOfWork uow) : ICredentialService
+    public class CredentialService(ILogger<CredentialService> logger, IUnitOfWork uow, IEncryptionService encryptionService) : ICredentialService
     {
         private readonly IRepositoryManager<User> _userRepo = uow.GetRepository<User>();
 
@@ -34,11 +34,11 @@ namespace EnhanceRustPlus.Business.Services
                 var newCredentials = new Credential
                 {
                     UserId = user.Id,
-                    GcmAndroidId = credentials.GcmAndroidId,
-                    GcmSecurityToken = credentials.GcmSecurityToken,
-                    PrivateKey = credentials.PrivateKey,
-                    PublicKey = credentials.PublicKey,
-                    AuthSecret = credentials.AuthSecret
+                    GcmAndroidId = encryptionService.EncryptString(credentials.GcmAndroidId.ToString()),
+                    GcmSecurityToken = encryptionService.EncryptString(credentials.GcmSecurityToken.ToString()),
+                    PrivateKey = encryptionService.EncryptString(credentials.PrivateKey),
+                    PublicKey = encryptionService.EncryptString(credentials.PublicKey),
+                    AuthSecret = encryptionService.EncryptString(credentials.AuthSecret)
                 };
 
                 user.Credentials = newCredentials;
