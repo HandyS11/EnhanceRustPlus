@@ -8,8 +8,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace EnhanceRustPlus.Configuration
 {
+    /// <summary>
+    /// Extension methods for configuring services in the application.
+    /// </summary>
     public static class ServiceConfigurationExtension
     {
+        /// <summary>
+        /// Adds the business services to the service collection.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <returns>The updated service collection.</returns>
         public static IServiceCollection AddBusinessServices(this IServiceCollection services)
         {
             services.AddTransient(typeof(IRepositoryManager<>), typeof(RepositoryManager<>));
@@ -24,6 +32,12 @@ namespace EnhanceRustPlus.Configuration
             return services;
         }
 
+        /// <summary>
+        /// Adds the database context to the service collection.
+        /// </summary>
+        /// <param name="services">The service collection.</param>
+        /// <param name="isDevelopment">A flag indicating whether the application is running in development mode.</param>
+        /// <returns>The updated service collection.</returns>
         public static IServiceCollection AddDbContext(this IServiceCollection services, bool isDevelopment)
         {
             services.AddDbContext<DbContext, EnhanceRustPlusDbContext>(opt =>

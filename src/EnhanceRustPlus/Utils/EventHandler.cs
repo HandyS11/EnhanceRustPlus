@@ -6,8 +6,16 @@ using Serilog;
 
 namespace EnhanceRustPlus.Utils
 {
+    /// <summary>
+    /// Handles various events in the Discord client.
+    /// </summary>
     public class EventHandlers(IServiceProvider serviceProvider, DiscordSocketClient client, InteractionService interactionService)
     {
+        /// <summary>
+        /// Logs a message asynchronously.
+        /// </summary>
+        /// <param name="message">The log message.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static async Task LogAsync(LogMessage message)
         {
             var severity = message.Severity switch
@@ -25,12 +33,21 @@ namespace EnhanceRustPlus.Utils
             await Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Performs actions when the client is ready.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public async Task Ready()
         {
             await client.SetGameAsync("Rust");
             await interactionService.RegisterCommandsGloballyAsync();
         }
 
+        /// <summary>
+        /// Handles the creation of interactions.
+        /// </summary>
+        /// <param name="interaction">The socket interaction.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public Task InteractionCreated(SocketInteraction interaction)
         {
             var ctx = new SocketInteractionContext(client, interaction);

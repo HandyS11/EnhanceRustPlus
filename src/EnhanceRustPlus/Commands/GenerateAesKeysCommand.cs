@@ -15,8 +15,12 @@ namespace EnhanceRustPlus.Commands
 
             var embed = new EmbedBuilder
             {
-                Title = "Generated AES Keys",
-                Description = $"Key: {Convert.ToBase64String(aesKeys)}\nIV: {Convert.ToBase64String(aesIv)}",
+                Title = "AES Keys",
+                Fields =
+                [
+                    new EmbedFieldBuilder { Name = "Key", Value = Convert.ToBase64String(aesKeys) },
+                    new EmbedFieldBuilder { Name = "IV", Value = Convert.ToBase64String(aesIv) }
+                ],
                 Color = Color.Green
             };
             await RespondAsync(embed: embed.Build(), ephemeral: true);

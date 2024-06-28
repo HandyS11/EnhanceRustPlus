@@ -16,7 +16,7 @@ namespace EnhanceRustPlus.Commands
             var embed = new EmbedBuilder
             {
                 Description = "Setup started..",
-                Color = Color.Green
+                Color = Color.Green,
             };
             await RespondAsync(embed: embed.Build(), ephemeral: true);
         }
