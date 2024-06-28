@@ -1,12 +1,9 @@
-﻿using EnhanceRustPlus.Business.Parameters;
-
-namespace EnhanceRustPlus.Business.Interfaces
+﻿namespace EnhanceRustPlus.Business.Interfaces
 {
     public interface IUserService
     {
-        Task CreateUser(ulong discordId, ulong steamId, string name);
-        Task RemoveUser(ulong discordId);
-        Task SetCredentials(CredentialsParameter credentials, ulong discordId);
-        Task RemoveCredentials(ulong discordId);
+        Task<bool> CreateUser(ulong discordId, ulong steamId, string name);
+        Task<bool> RegisterUser(ulong discordId, ulong guildId);
+        Task<bool> RemoveUser(ulong discordId);
     }
 }

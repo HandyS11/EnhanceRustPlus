@@ -16,9 +16,10 @@ namespace EnhanceRustPlus.Configuration
             services.AddTransient(typeof(IUnitOfWork), typeof(UnitOfWork));
 
             services.AddSingleton<ICleanupService, CleanupService>();
-            services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<ICredentialService, CredentialService>();
             services.AddSingleton<IEncryptionService, EncryptionService>();
             services.AddSingleton<ISetupService, SetupService>();
+            services.AddSingleton<IUserService, UserService>();
 
             return services;
         }
