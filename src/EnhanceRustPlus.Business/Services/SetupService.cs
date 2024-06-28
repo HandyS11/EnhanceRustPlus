@@ -29,6 +29,9 @@ namespace EnhanceRustPlus.Business.Services
         {
             logger.LogEnteringMethod();
 
+            var oldGuild = _guildRepo.GetAsIQueryable().FirstOrDefault(x => x.Id == guildId);
+            if (oldGuild != null) logger.LogAndThrowBusinessException(Constants.GuildAlreadyExistsInDatabase);
+
             var roleId = await CreateRoleAsync(guildId, roleName);
             var mainCategoryId = await CreateCategoryAsync(guildId, categoryName, roleId);
             var basicChannels = await CreateBasicsChannelsAsync(guildId, mainCategoryId);
