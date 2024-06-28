@@ -4,7 +4,7 @@ namespace EnhanceRustPlus.Business.Interfaces
 {
     public interface ICredentialService
     {
-        Task<bool> SetCredentials(ulong discordId, CredentialsParameter credentials);
-        Task<bool> RemoveCredentials(ulong discordId);
+        Task SetCredentials(ulong discordId, CredentialsParameter credentials);
+        Task RemoveCredentials(ulong discordId);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using EnhanceRustPlus.Business.Exceptions;
 using EnhanceRustPlus.Business.Extensions;
+using EnhanceRustPlus.Business.Helpers;
 using EnhanceRustPlus.Business.Interfaces;
 using EnhanceRustPlus.Business.Parameters;
 using EnhanceRustPlus.EfCore.Entities;
@@ -17,84 +18,66 @@ namespace EnhanceRustPlus.Business.Services
         private readonly IRepositoryManager<User> _userRepo = uow.GetRepository<User>();
 
         /// <summary>
-        /// Sets the credentials for the user with the specified Discord ID.
+        /// Sets the credentials for a user.
         /// </summary>
         /// <param name="discordId">The Discord ID of the user.</param>
         /// <param name="credentials">The credentials to set.</param>
-        /// <returns>Returns true if the credentials are set successfully, otherwise false.</returns>
-        public async Task<bool> SetCredentials(ulong discordId, CredentialsParameter credentials)
+        public async Task SetCredentials(ulong discordId, CredentialsParameter credentials)
         {
             logger.LogEnteringMethod();
 
+            var user = _userRepo.GetAsIQueryable().FirstOrDefault(x => x.Id == discordId);
+            if (user == null) throw new BusinessException(Constants.UserNotFoundInDatabase);
+
+            var newCredentials = new Credential
+            {
+                UserId = user.Id,
+                GcmAndroidId = encryptionService.EncryptString(credentials.GcmAndroidId.ToString()),
+                GcmSecurityToken = encryptionService.EncryptString(credentials.GcmSecurityToken.ToString()),
+                PrivateKey = encryptionService.EncryptString(credentials.PrivateKey),
+                PublicKey = encryptionService.EncryptString(credentials.PublicKey),
+                AuthSecret = encryptionService.EncryptString(credentials.AuthSecret)
+            };
+
+            user.Credentials = newCredentials;
+
             try
             {
-                var user = _userRepo.GetAsIQueryable().FirstOrDefault(x => x.Id == discordId);
-                if (user == null) throw new BusinessException("User not found");
-
-                var newCredentials = new Credential
-                {
-                    UserId = user.Id,
-                    GcmAndroidId = encryptionService.EncryptString(credentials.GcmAndroidId.ToString()),
-                    GcmSecurityToken = encryptionService.EncryptString(credentials.GcmSecurityToken.ToString()),
-                    PrivateKey = encryptionService.EncryptString(credentials.PrivateKey),
-                    PublicKey = encryptionService.EncryptString(credentials.PublicKey),
-                    AuthSecret = encryptionService.EncryptString(credentials.AuthSecret)
-                };
-
-                user.Credentials = newCredentials;
-
                 _userRepo.Update(user);
                 await uow.SaveAsync();
             }
-            catch (BusinessException e)
-            {
-                logger.LogError(e, "Error setting credentials");
-                return false;
-            }
             catch (Exception e)
             {
-                logger.LogError(e, "Unknown Error");
-                return false;
+                logger.LogAndThrowBusinessException(Constants.CannotSaveTransactionInDatabase, e);
             }
 
             logger.LogExitingMethod();
-
-            return true;
         }
 
         /// <summary>
-        /// Removes the credentials for the user with the specified Discord ID.
+        /// Removes the credentials for a user.
         /// </summary>
         /// <param name="discordId">The Discord ID of the user.</param>
-        /// <returns>Returns true if the credentials are removed successfully, otherwise false.</returns>
-        public async Task<bool> RemoveCredentials(ulong discordId)
+        public async Task RemoveCredentials(ulong discordId)
         {
             logger.LogEnteringMethod();
 
+            var user = _userRepo.GetAsIQueryable().Include(u => u.Credentials).FirstOrDefault(x => x.Id == discordId);
+            if (user == null) throw new BusinessException(Constants.UserNotFoundInDatabase);
+
+            user.Credentials = null;
+
             try
             {
-                var user = _userRepo.GetAsIQueryable().Include(u => u.Credentials).FirstOrDefault(x => x.Id == discordId);
-                if (user == null) throw new BusinessException("User not found");
-
-                user.Credentials = null;
-
                 _userRepo.Update(user);
                 await uow.SaveAsync();
             }
-            catch (BusinessException e)
-            {
-                logger.LogError(e, "Error removing user");
-                return false;
-            }
             catch (Exception e)
             {
-                logger.LogError(e, "Unknown Error");
-                return false;
+                logger.LogAndThrowBusinessException(Constants.CannotSaveTransactionInDatabase, e);
             }
 
             logger.LogExitingMethod();
-
-            return true;
         }
     }
 }
