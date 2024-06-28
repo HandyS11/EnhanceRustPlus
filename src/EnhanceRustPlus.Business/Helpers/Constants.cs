@@ -2,7 +2,7 @@
 {
     public static class Constants
     {
-        public const string CannotSaveTransactionInDatabase = nameof(CannotSaveTransactionInDatabase);
+        public const string CannotSaveTransactionToDatabase = nameof(CannotSaveTransactionToDatabase);
         public const string GuildAlreadyExistsInDatabase = nameof(GuildAlreadyExistsInDatabase);
         public const string GuildNotFoundInDatabase = nameof(GuildNotFoundInDatabase);
         public const string UserAlreadyExistsInDatabase = nameof(UserAlreadyExistsInDatabase);

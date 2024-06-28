@@ -48,7 +48,7 @@ namespace EnhanceRustPlus.Business.Services
             }
             catch (Exception e)
             {
-                logger.LogAndThrowBusinessException(Constants.CannotSaveTransactionInDatabase, e);
+                logger.LogAndThrowBusinessException(Constants.CannotSaveTransactionToDatabase, e);
             }
 
             logger.LogExitingMethod();
@@ -74,7 +74,7 @@ namespace EnhanceRustPlus.Business.Services
             }
             catch (Exception e)
             {
-                logger.LogAndThrowBusinessException(Constants.CannotSaveTransactionInDatabase, e);
+                logger.LogAndThrowBusinessException(Constants.CannotSaveTransactionToDatabase, e);
             }
 
             logger.LogExitingMethod();
