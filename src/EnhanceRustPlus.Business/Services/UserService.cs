@@ -160,12 +160,11 @@ namespace EnhanceRustPlus.Business.Services
             var user = _userRepo.GetAsIQueryable().FirstOrDefault(x => x.Id == discordId);
             if (user == null) throw new BusinessException(Constants.UserNotFoundInDatabase);
 
-            var userGuilds = _guildUserRepo.GetAsIQueryable().Where(x => x.UserId == discordId).ToList();
+            //var userGuilds = _guildUserRepo.GetAsIQueryable().Where(x => x.UserId == discordId).ToList();
 
             try
             {
-                userGuilds.ForEach(x => _guildUserRepo.Delete(x));
-
+                //userGuilds.ForEach(x => _guildUserRepo.Delete(x));
                 _userRepo.Delete(user);
                 await uow.SaveAsync();
             }
